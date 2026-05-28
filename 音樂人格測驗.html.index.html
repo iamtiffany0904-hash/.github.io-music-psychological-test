@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大地之音：音樂靈魂觀測站 | Earth Music Soul Quiz</title>
+    <style>
+        /* 1. 溫馨大地色系與現代網頁設定 */
+        :root {
+            --bg-color: #1e1916;       /* 深焙茶褐黑，沉穩溫暖 */
+            --card-bg: #29221e;        /* 大地木質暗褐 */
+            --text-main: #f5eedc;      /* 溫潤的燕麥奶白 */
+            --text-muted: #9c8e82;     /* 暮光暖灰 */
+            --accent-gold: #dfa86c;    /* 盛開菊花的焙茶金 */
+            --accent-warm: #c87a4b;    /* 溫馨的落葉陶橘 */
+            --border-color: #3d332e;   /* 溫和的泥土碳線 */
+            --btn-hover: #382e28;      /* 按鈕懸停深色 */
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'PingFang TC', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; 
+            align-items: center;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #2e241f 0%, #1e1916 100%);
+        }
+
+        /* 主遊戲包裝容器 */
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 460px;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        /* 頂部進度條與菊花小彩蛋 */
+        .progress-container {
+            position: relative;
+            width: 100%;
+            max-width: 380px;
+            height: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            overflow: visible; 
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 33%; /* 先給一個基礎進度看效果 */
+            background: linear-gradient(90deg, var(--accent-warm), var(--accent-gold));
+            border-radius: 3px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 進度條上的小菊花 */
+        .chrysanthemum-icon {
+            position: absolute;
+            top: 50%;
+            left: 33%; 
+            width: 30px;
+            height: 30px;
+            transform: translate(-50%, -50%); 
+            background: var(--accent-gold);
+            clip-path: polygon(50% 0%, 61% 20%, 83% 10%, 75% 33%, 98% 35%, 80% 50%, 98% 65%, 75% 67%, 83% 90%, 61% 80%, 50% 100%, 39% 80%, 17% 90%, 25% 67%, 2% 65%, 20% 50%, 2% 35%, 25% 33%, 17% 10%, 39% 20%);
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s ease;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
+        }
+
+        /* 2. 字卡疊放容器 */
+        .cards-box {
+            position: relative;
+            width: 100%;
+            height: 480px; 
+        }
+
+        .card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 32px 26px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.95) translateY(15px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 💡 修正：拉高 active 層級，並確保滑鼠能點擊 */
+        .card.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+            z-index: 20; 
+        }
+
+        .card.exit {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-100px) translateY(-10px) rotate(-4deg);
+            z-index: 1;
+        }
+
+        .card-header {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+            text-transform: unppercase;}
